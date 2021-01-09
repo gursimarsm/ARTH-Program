@@ -1,0 +1,45 @@
+- hosts: Slaves
+  vars_prompt:
+  - name: dn_dir
+    private: no
+    prompt: "Enter datanode directory"
+  - name: IP_MASTER
+    private: no
+    prompt: "Enter master node IP"
+  tasks:
+  - name: "copying hadoop software"
+    copy:
+        src: "/root/hadoop-1.2.1-1.x86_64.rpm"
+        dest: "/root/"
+  - name: "copying java software"
+    copy:
+        src: "/root/jdk-8u171-linux-x64.rpm"
+        dest: "/root/"
+  - name: "Installing hadoop software"
+    command: "rpm -ivh hadoop-1.2.1-1.x86_64.rpm --force"
+  - name: "Installing java software"
+    command: "rpm -ivh jdk-8u171-linux-x64.rpm --force"
+  - name: "directory creation"
+    file:
+      state: directory
+      path: "{{dn_dir}}"
+  - name: "HDFS-SITE.XML configuration"
+    blockinfile:
+      path: "/etc/hadoop/hdfs-site.xml"
+      insertafter: "<configuration>"
+      block: 
+        <property>
+        <name>dfs.data.dir</name>
+        <value>{{dn_dir}}</value>
+        </property>
+  - name: "CORE-SITE.XML configuration"
+    blockinfile:
+      path: "/etc/hadoop/core-site.xml"  
+      insertafter: "<configuration>"
+      block: 
+        <property>
+        <name>fs.default.name</name>
+        <value>hdfs://{{IP_MASTER}}:9001</value>
+        </property>
+  - name: "starting the datanode"
+    command: "hadoop-daemon.sh start datanode"
