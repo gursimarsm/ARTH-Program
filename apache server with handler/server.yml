@@ -1,0 +1,75 @@
+- hosts: all
+  vars_files:
+       - myvar.yml
+
+  tasks:
+  - name: "Creating Directory"
+    file:
+       state: directory
+       path: "{{ dvd_dir }}"
+
+  - name: "Mounting Directory"
+    mount:
+       src: "/dev/cdrom"
+       path: "{{ dvd_dir }}"
+       state: mounted
+       fstype: "iso9660"
+
+  - name: "configuring yum repository (AppStream)"
+    yum_repository:
+       baseurl: "{{ dvd_dir }}/AppStream"
+       name: "mydvd1"
+       description: "my yum dvd1 for package"
+       gpgcheck: no
+
+  - name: "configuring yum repository (BaseOS)"
+    yum_repository:
+       baseurl: "{{ dvd_dir }}/BaseOS"
+       name: "mydvd2"
+       description: "my yum dvd2 for package"
+       gpgcheck: no
+
+  - name: "Installing httpd apache software"
+    package:
+       name: "httpd"
+       state: present
+
+  - name: "Creating the document root folder"
+    file:
+       state: directory
+       path: "{{ doc_root }}"
+
+  - name: "Configuring the conf file for document root and port number"
+    template:
+       dest: "/etc/httpd/conf.d/serverconf.conf"
+       src: "serverconf.conf"
+    notify:
+    - restart apache
+
+  - name: "copying the content of website in document root folder"
+    copy:
+       dest: "{{ doc_root }}/index.html"
+       content: "ARTH task 11.3 \n"
+
+
+  - name: "ALlowing firewall rules for the port on which webserver is running"
+    firewalld:
+       port: "{{ http_port }}/tcp"
+       state: enabled
+       permanent: yes
+       immediate: yes
+
+  - name: Disable SELinux
+    ansible.posix.selinux:
+       state: disabled
+
+  - name: "Ensure apache is running"
+    service:
+       name: "httpd"
+       state: started
+
+  handlers:
+    - name: restart apache
+      service:
+        name: "httpd"
+        state: restarted

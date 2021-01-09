@@ -1,0 +1,4 @@
+ip: <host_ip>
+dvd_dir: "/dvddir"
+doc_root: "/var/www/docroot"
+http_port: 9808
