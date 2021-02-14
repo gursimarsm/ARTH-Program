@@ -1,3 +1,3 @@
 # ARTH-Program
-The repository conatins tasks related to the ARTH program. </br>
+The repository contains tasks related to the ARTH program. </br>
 www.rightarth.com
