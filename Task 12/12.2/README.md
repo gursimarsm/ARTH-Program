@@ -1,1 +1,0 @@
-# 12.1 Use Ansible playbook to Configure Reverse Proxy i.e., HAproxy and update its configuration file automatically on each time new Managed node (Configured with Apache Webserver) join the inventory.
