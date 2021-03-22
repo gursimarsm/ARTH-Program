@@ -1,0 +1,43 @@
+- hosts:
+  tasks:
+  - name: "Installing HAProxy"
+    package:
+     name: "haproxy"
+
+  - name: "Starting HAProxy service"
+    service:
+     name: "haproxy"
+     stte: started
+
+  - name: "Updating the HAProxy config file
+    template: 
+     src: "/root/ansible-ws/loadb/haproxy.cfg"
+     dest: "/etc/haproxy/haproxy.cfg"
+
+- hosts: backend_servers
+  tasks:
+  - name: "Installing httpd"
+    package: 
+     name: "httpd"
+
+  - name: "Install PHP"
+    package:
+     name: "php"
+
+  - name: "Copying Content"
+    copy:
+     src: "/root/ansible-ws/loadb/index.php"
+     dest: "/var/www/html/"
+
+  - name: "Starting httpd service"
+    service:
+     name: "httpd"
+     state: started
+
+  - name: "Firewall"
+    firewalld:
+     port: 80/tcp
+     state: enabled
+     permanent: yes
+     immediate: yes
+   
