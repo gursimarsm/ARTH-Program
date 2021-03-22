@@ -1,0 +1,35 @@
+- hosts: localhost
+  vars_files:
+          var.yml
+  tasks:
+  - name: ec2
+    ec2:
+            region: "{{ region }}"
+            image: ami-0a9d27a9f4f5c0efc
+            instance_type: t2.micro 
+            group_id: sg-0c140da1ca0f6407d
+            key_name: key1111
+            count: 1
+            instance_tags:
+                    name: loadbalancer
+            state: present
+            vpc_subnet_id: subnet-05f3d09c6c1e02e9d
+            aws_access_key: "{{ aws_access }}"
+            aws_secret_key: "{{ aws_secret }}"
+
+  - name: ec2 
+    ec2:
+            region: "{{ region }}"
+            image: ami-0a9d27a9f4f5c0efc
+            instance_type: t2.micro
+            group_id: sg-0c140da1ca0f6407d
+            key_name: key1111
+            count: 2
+            instance_tags:
+                    name: web_server
+            state: present
+            vpc_subnet_id: subnet-05f3d09c6c1e02e9d
+            aws_access_key: "{{ aws_access }}"
+            aws_secret_key: "{{ aws_secret }}"
+
+
