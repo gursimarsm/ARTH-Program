@@ -1,0 +1,17 @@
+---
+ - hosts : all
+   vars_files :
+     - "{{ansible_facts['distribution']}}.{{ansible_facts['distribution_major_version']}}.yml" 
+   tasks :       
+     - name : install the latest version of webserver
+       package:
+         name : "{{ package }}"
+         state : present
+     - name : copy the file 
+       template :
+               dest : "{{ root_doc }}"
+               src : index.html
+     - name : start the service
+       service :
+               name : "{{ service }}"
+               state : started

@@ -1,0 +1,3 @@
+package : httpd
+root_doc : /var/www/html
+service: httpd

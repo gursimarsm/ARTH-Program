@@ -1,0 +1,12 @@
+- hosts: docker
+  tasks:
+    - name: "Installing Httpd service"
+      package:
+        name: "httpd"
+        state: present
+- name: "Creating html file"
+      copy:
+        content : "<b><center>Webserver successfully configured</center></b>"
+        dest: "/var/www/html/index.html"
+- name: "Starting Httpd Service"
+      command: "/usr/sbin/httpd"

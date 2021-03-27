@@ -1,0 +1,46 @@
+- hosts: localhost
+  vars_prompt:
+    - name: container_name
+      prompt: "Docker Container Name:"
+      private: no
+  vars:
+          - image_name: centos:v1
+  tasks:
+    - name: Creating Repo for yum
+      yum_repository:
+        name: docker
+        file: docker
+        description: Docker Yum Repo
+        baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
+        gpgcheck: no
+    - name: Install Docker-CE
+      command: "yum install -y  docker-ce --nobest"
+    - name: starting docker services
+      service:
+        name: "docker"
+        state: started
+        enabled: yes
+    - name: Installing Docker Library
+      command: "pip3 install docker-py"
+    - name: pull an image
+      docker_image:
+        name: "{{ image_name }}"
+        source: pull
+    - name: "Launching {{ container_name }} Container"
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}"
+        state: started
+        interactive: yes
+        detach: yes
+        tty: yes
+    - name: "Container Info"
+      docker_container_info:
+        name: "{{ container_name }}"
+      register: docker_info
+- debug:
+        var: docker_info.container.NetworkSettings.IPAddress
+    - name: "Retriving IP dynamically and updating in the inventory"
+      template:
+        src: "ip.txt"
+        dest: "/root/dockerip.txt"

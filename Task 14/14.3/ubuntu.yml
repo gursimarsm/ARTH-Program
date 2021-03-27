@@ -1,0 +1,3 @@
+package : apache2
+root : /var/www/html
+service: apache2
