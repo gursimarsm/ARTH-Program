@@ -1,0 +1,35 @@
+---
+# tasks file for myloadbalancer
+
+- name: "installing haproxy software"
+  package:
+          name: "{{ p_name }}"
+          state: present
+
+- name: "setting up configuration file"
+  template:
+          src: "files/haproxy.cfg.j2"
+          dest: "/etc/haproxy/haproxy.cfg"
+
+- name: "starting the firewalld services"
+  service:
+          name: "firewalld"
+          state: started
+
+- name: "exposing the port of proxy"
+  firewalld:
+          port: "{{ port_no }}/tcp"
+          state: enabled
+          permanent: yes
+          immediate: yes
+
+- name: " disabling selinux"
+  command: "setenforce 0"
+
+
+- name: "starting service"
+  service:
+          name: "{{ s_name }}"
+          state: started
+          enabled: yes
+   

@@ -1,0 +1,19 @@
+---
+# tasks file for myapache
+- name: "installing apache software"  
+  package:
+          name: "{{ p_name }}"
+          state: present
+
+- name: "webpage"
+  copy:
+          src: files/index.html.j2
+          dest: /var/www/html/index.html
+  register: x
+
+
+- name: "starting the web service"
+  service:
+          name: "{{ s_name }}"
+          state: started
+  when: x.changed
